@@ -2,7 +2,7 @@ const express = require('express');
 var bodyParser = require('body-parser');
 const nodemailer = require('nodemailer');
 
-const port = env.PORT || 3001;
+const port = 8081;
 const app = express();
 
 app.use(bodyParser.json())
@@ -16,35 +16,39 @@ app.use(function (req, res, next) {
     next();
 });
 
-
 // Define an endpoint
 app.post('/sendEmail', (req, res) => {
+    //OTP ranges from 100000 to 900000 so it will be always 6 digit and never starts with 0.
+    let otp = Math.floor(100000 + Math.random() * 900000)
+    console.log("otp : ",otp);
+
     // Create a transporter using the Gmail SMTP server
     const transporter = nodemailer.createTransport({
         service: 'gmail',
         auth: {
         user: 'rajan.reddy21@gmail.com',  // Replace with your Gmail email address
-        pass: 'RajanReddy@21',        // Replace with your Gmail password or an App Password
+        pass: 'xorw lvig ludo mpmi',        // Replace with your Gmail password or an App Password
         },
     });
 
     // Email data
     const mailOptions = {
         from: 'rajan.reddy21@gmail.com', // Your Gmail email address
-        to: 'barsagadeshubham123@gmail.com', // Recipient's email address
-        subject: 'Hello from Node.js',
-        text: 'This is a test email sent from Node.js with nodemailer.',
+        to: req.body.email, // Recipient's email address
+        subject: 'OTP Verification',
+        text: 'You OTP Code is '+ otp +'. The code is valid for 1 minute',
     };
     
     // Send the email
     transporter.sendMail(mailOptions, function (error, info) {
         if (error) {
-        console.error('Error sending email:', error);
+            console.error('Error sending email:', error);
+            res.send({statusCode : 500, message : 'Something went wrong'});
         } else {
-        console.log('Email sent:', info.response);
+            console.log('Email sent:', info.response);
+            res.send({statusCode : 200, data : { otp : otp }, message : 'Otp sent successfully'});
         }
     });
-    res.send('Hello, World!');
 });
 
 app.listen(port, () =>

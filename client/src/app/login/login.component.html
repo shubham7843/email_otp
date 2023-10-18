@@ -1,0 +1,23 @@
+
+<div class="wrapper fadeInDown">
+  <div id="formContent">
+      <div [formGroup]="loginForm">
+        <br>
+        <h3> {{screen_lable}} </h3>
+        <div *ngIf="!OTP_Verified">
+          <div>
+            <input type="text" id="email" class="fadeIn second" formControlName="email" placeholder="email">
+            <br>
+            <label *ngIf="showMessage">Only emails from the ".dso.org.sg" domain should be allowed</label>
+            <label>{{email_status}}</label>
+          </div>
+          <div  *ngIf="sentOTP">
+            <input type="text" id="otp" class="fadeIn third" formControlName="otp" placeholder="otp">
+            <br>
+            <label>Remaining retry attemps : {{retryAttempts}}</label>
+          </div>
+          <input type="submit" (click)="submit()" class="fadeIn fourth" value="{{button}}" [disabled]="buttonDisabled">
+        </div>
+      </div>
+  </div>
+</div>
