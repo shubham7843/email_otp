@@ -11,19 +11,35 @@ import { ApiServiceService } from '../api-service.service';
 export class LoginComponent implements OnInit {
 
   name = 'Angular';
+  //To change the button name dynamicaly
   button = 'Send OTP';
+
+  //flag to display the email status messages
   emailSentFailed : boolean = false;
   buttonDisabled : boolean = false;
   loginForm:any = FormGroup;
   retryAttempts : number = 10;
-  sentOTP = false;
-  otp: any = null;
-  email : string = '';
-  showMessage : boolean = false;
-  OTP_Verified : boolean = false;
-  screen_lable : string = 'Login';
-  email_status : string = '';
 
+  //flag to display otp field dynamically
+  sentOTP = false;
+
+  // to set the otp for validation but once database implemented 
+  // will validate from backend api
+  otp: any = null;
+
+  email : string = '';
+
+  //flag to display domain regarding messages
+  showMessage : boolean = false;
+
+  //flag to display the email and otp fields
+  OTP_Verified : boolean = false;
+  
+  //to display dynamic screen messages 
+  screen_lable : string = 'Login';
+
+  //to display dynamic email status regarding messages 
+  email_status : string = '';
 
   constructor(private apiService : ApiServiceService) { }
 
@@ -34,6 +50,7 @@ export class LoginComponent implements OnInit {
     })
   }
 
+  //Making OTP field required validations once otp sent on email
   setValidatorForOTP(){
     const otpControl: AbstractControl | null = this.loginForm.get('otp');
       // Check if the control exists
@@ -47,6 +64,7 @@ export class LoginComponent implements OnInit {
   }
 
 
+  //1min timer after otp sent on email 
   oneMinuteTimer() {
     console.log("Timer started. This message will appear in 1 minute.");
   
@@ -62,6 +80,7 @@ export class LoginComponent implements OnInit {
   }
   
 
+  //to create otp and send on email from backend
   async sendEmail(){
     
     (await this.apiService.sendEmail(this.email)).subscribe((response) =>{
@@ -80,9 +99,11 @@ export class LoginComponent implements OnInit {
     })
   }
   
+  //It will call on email and otp submission
   submit(){
     console.log("Form : ",this.loginForm.status)
     
+    //For allowing specified domain name in email
     if(this.loginForm.value.email.endsWith(".dso.org.sg") || this.loginForm.value.email.endsWith("gmail.com")){
       this.email_status = "";
       this.showMessage = false;
@@ -92,6 +113,7 @@ export class LoginComponent implements OnInit {
       return;
     }
 
+    //to check retry attempts 
     if(this.retryAttempts == 0){
       this.screen_lable = 'OTP is wrong after 10 tries';
       this.OTP_Verified = true;
